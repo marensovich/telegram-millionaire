@@ -11,8 +11,14 @@ import org.telegram.telegrambots.longpolling.starter.SpringLongPollingBot;
 import org.telegram.telegrambots.longpolling.util.LongPollingSingleThreadUpdateConsumer;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
+import org.telegram.telegrambots.meta.api.objects.webapp.WebAppInfo;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
+
+import java.util.Collections;
 
 @Component
 public class Bot implements SpringLongPollingBot, LongPollingSingleThreadUpdateConsumer {
@@ -34,19 +40,30 @@ public class Bot implements SpringLongPollingBot, LongPollingSingleThreadUpdateC
 
     @Override
     public void consume(Update update) {
-        // We check if the update has a message and the message has text
         if (update.hasMessage() && update.getMessage().hasText()) {
-            // Set variables
-            String message_text = update.getMessage().getText();
-            long chat_id = update.getMessage().getChatId();
-
-            SendMessage message = SendMessage // Create a message object
+            KeyboardButton webAppButton = KeyboardButton
                     .builder()
-                    .chatId(chat_id)
-                    .text(message_text)
+                    .text("Открыть игру 🎮")
+                    .webApp(new WebAppInfo("https://abcd1234.ngrok-free.app"))
                     .build();
+
+            KeyboardRow row = new KeyboardRow();
+            row.add(webAppButton);
+
+            ReplyKeyboardMarkup keyboard = ReplyKeyboardMarkup
+                    .builder()
+                    .keyboard(Collections.singletonList(row))
+                    .resizeKeyboard(true)
+                    .build();
+
+            SendMessage msg = SendMessage.builder()
+                    .chatId(update.getMessage().getChatId())
+                    .text("Выбери действие:")
+                    .replyMarkup(keyboard)
+                    .build();
+
             try {
-                telegramClient.execute(message); // Sending our message object to user
+                telegramClient.execute(msg);
             } catch (TelegramApiException e) {
                 e.printStackTrace();
             }
