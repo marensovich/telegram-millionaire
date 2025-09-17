@@ -1,6 +1,8 @@
 package me.marensovich.backend.telegramBot.update;
 
+import me.marensovich.backend.services.UserService;
 import me.marensovich.backend.telegramBot.Bot;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -9,21 +11,24 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 @Component
 public class UpdateHandler {
 
+    @Autowired
+    UserService userService;
+
     public void handleUpdate(Update update) throws TelegramApiException {
 
-        if (update.hasMessage() || update.hasCallbackQuery()){
-            if (update.hasMessage()){
-                //if (userService.isUserExists(update.getMessage().getFrom().getId())){
-                    if (!Bot.getInstance().getCommandManager().hasActiveCommand(update.getMessage().getFrom().getId())){
-                        if (update.getMessage().hasText()){
-                            if (update.getMessage().getText().startsWith("/")){
+        if (update.hasMessage() || update.hasCallbackQuery()) {
+            if (update.hasMessage()) {
+                if (userService.checkAllUserExist(update.getMessage().getFrom().getId())) {
+                    if (!Bot.getInstance().getCommandManager().hasActiveCommand(update.getMessage().getFrom().getId())) {
+                        if (update.getMessage().hasText()) {
+                            if (update.getMessage().getText().startsWith("/")) {
                                 if (!Bot.getInstance().getCommandManager().executeCommand(update)) {
                                     String text = "Команда не распознана, проверьте правильность написания команды. \n\n" +
                                             "Команды с доп. параметрами указаны отдельной графой в информации. Подробнее в /help.";
                                     SendMessage message = SendMessage.builder()
-                                        .chatId(update.getMessage().getChatId().toString())
-                                        .text(text)
-                                        .build();
+                                            .chatId(update.getMessage().getChatId().toString())
+                                            .text(text)
+                                            .build();
                                     try {
                                         Bot.getInstance().getTelegramClient().execute(message);
                                     } catch (TelegramApiException e) {
@@ -38,11 +43,11 @@ public class UpdateHandler {
                         return;
                     }
                 } else {
-                    //userService.createUser(update.getMessage().getFrom().getId());
+                    userService.addUser(update.getMessage().getFrom().getId());
                 }
             }
             if (update.hasCallbackQuery()) {
-                //if (userService.isUserExists(update.getCallbackQuery().getFrom().getId())){
+                if (userService.checkAllUserExist(update.getCallbackQuery().getFrom().getId())) {
                     boolean handled = Bot.getInstance().getCallbackHandler().handleCallback(update);
                     if (!handled) {
                         SendMessage errorMsg = SendMessage.builder()
@@ -56,7 +61,9 @@ public class UpdateHandler {
                         }
                     }
                 } else {
-                    //userService.createUser(update.getCallbackQuery().getFrom().getId());
+                    userService.addUser(update.getCallbackQuery().getFrom().getId());
                 }
             }
+        }
+    }
 }
