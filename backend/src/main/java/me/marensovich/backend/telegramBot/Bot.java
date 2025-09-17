@@ -2,6 +2,7 @@ package me.marensovich.backend.telegramBot;
 
 
 import lombok.Getter;
+import me.marensovich.backend.telegramBot.callback.CallbackHandler;
 import me.marensovich.backend.telegramBot.command.CommandManager;
 import me.marensovich.backend.telegramBot.update.UpdateHandler;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +32,7 @@ public class Bot implements SpringLongPollingBot, LongPollingSingleThreadUpdateC
     @Getter private final TelegramClient telegramClient;
     @Getter private static Bot instance;
     @Autowired @Getter private CommandManager commandManager;
+    @Autowired @Getter private CallbackHandler callbackHandler;
     @Autowired private UpdateHandler updateHandler;
 
     public Bot() {

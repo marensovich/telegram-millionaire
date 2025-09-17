@@ -43,17 +43,18 @@ public class UpdateHandler {
             }
             if (update.hasCallbackQuery()) {
                 //if (userService.isUserExists(update.getCallbackQuery().getFrom().getId())){
-//                    boolean handled = Bot.getInstance().getCallbackManager().handleCallback(update);
-//                    if (!handled) {
-//                        SendMessage errorMsg = new SendMessage();
-//                        errorMsg.setChatId(update.getCallbackQuery().getMessage().getChatId().toString());
-//                        errorMsg.setText("Действие не распознано, попробуйте ещё раз");
-//                        try {
-//                            Bot.getInstance().execute(errorMsg);
-//                        } catch (TelegramApiException e) {
-//                            throw new RuntimeException(e);
-//                        }
-//                    }
+                    boolean handled = Bot.getInstance().getCallbackHandler().handleCallback(update);
+                    if (!handled) {
+                        SendMessage errorMsg = SendMessage.builder()
+                                .chatId(update.getCallbackQuery().getMessage().getChatId().toString())
+                                .text("Действие не распознано, попробуйте ещё раз")
+                                .build();
+                        try {
+                            Bot.getInstance().getTelegramClient().execute(errorMsg);
+                        } catch (TelegramApiException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
                 } else {
                     //userService.createUser(update.getCallbackQuery().getFrom().getId());
                 }
