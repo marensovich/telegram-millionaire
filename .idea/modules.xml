@@ -4,7 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/backend.main.iml" filepath="$PROJECT_DIR$/.idea/modules/backend.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/frontend/frontend.iml" filepath="$PROJECT_DIR$/frontend/frontend.iml" />
-      <module fileurl="file://$PROJECT_DIR$/telegram-millionaire.iml" filepath="$PROJECT_DIR$/telegram-millionaire.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/telegram-millionaire.iml" filepath="$PROJECT_DIR$/.idea/telegram-millionaire.iml" />
     </modules>
   </component>
 </project>
