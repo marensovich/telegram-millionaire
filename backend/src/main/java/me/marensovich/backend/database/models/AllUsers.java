@@ -18,4 +18,5 @@ public class AllUsers {
 
     @Column(name = "createdAt", nullable = false)
     private Timestamp createdAt;
+
 }

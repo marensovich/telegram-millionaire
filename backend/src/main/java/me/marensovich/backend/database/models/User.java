@@ -13,7 +13,6 @@ public class User {
     @Column(name = "userId", unique = true, nullable = false)
     private Long userId;
 
-
     @Column(name = "isAdmin", nullable = false)
     private boolean isAdmin;
 
